@@ -1,119 +1,130 @@
 package com.example.coffeshops
 
-import android.content.res.Resources
-import android.content.res.XmlResourceParser
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.coffeshops.ui.theme.CoffeShop
-import com.example.coffeshops.ui.theme.appfont
-import org.xmlpull.v1.XmlPullParser
-
+import com.example.coffeshops.ui.theme.coffe
+import java.lang.Math.ceil
+import java.lang.Math.floor
 
 @Composable
-fun AppInit() {
+fun AppInit(navController: NavHostController, coffeshops: List<CoffeShop>) {
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {CreateCoffeCards()}
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item(coffeshops) { CreateCoffeCards(coffeshops, navController) }
     }
 }
 
 @Composable
-fun CreateCoffeCards() {
-    val coffeshops = getAllCafes()
+fun CreateCoffeCards(coffeshops: List<CoffeShop>, navController: NavHostController) {
     for (shop in coffeshops) {
-        ItemShop(shop)
+        ItemShop(shop, navController )
+        Spacer(modifier = Modifier.height(5.dp))
     }
 }
 
 @Composable
-fun ItemShop(coffeshop: CoffeShop) {
-    Card(elevation = CardDefaults.cardElevation(10.dp)) {
-        Column {
-            Image(painter = painterResource(id = coffeshop.image), contentDescription = "")
-            Text(text = coffeshop.name, fontFamily = appfont)
-            Divider()
-            Text(text = coffeshop.addr)
-        }
+fun ItemShop(coffeshop: CoffeShop, navController: NavHostController) {
+    Card(
+        elevation = CardDefaults.cardElevation(10.dp),
+        modifier = Modifier
+            .padding(10.dp)
+            .clickable { navController.navigate("CommentsSection") }
+    ) {
+        Image(
+            painter = painterResource(id = coffeshop.image),
+            contentDescription = "shop",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(width = 1.dp, height = 200.dp)
+        )
+
+        Spacer(Modifier.height(5.dp))
+
+        Text(text = coffeshop.name, style = coffe)
+
+        RatingBar()
+
+        Text(text = coffeshop.addr)
+        Divider()
+        TextButton(onClick = { /*TODO*/ }) {Text(text = "RESERVE")}
+
     }
 }
 
-fun getAllCafes(): List<CoffeShop> {
-    val comments = listOf<String>("Excelente café y ambiente histórico",
-                                  "Una joya de lugar",
-                                  "Me encanta este sitio",
-                                  "El mejor café",
-                                  "Gran experiencia en cada visita",
-                                  "Un lugar con mucha historia",
-                                  "El espresso es magnífico",
-                                  "Una experiencia única",
-                                  "Altamente recomendado"
-    )
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RatingBar() {
+    val range = 0f..5f
+    val steps = 5
 
-    return listOf(
-        CoffeShop(
-            "Antico Caffè Greco",
-            "St. Italy, Rome",
-            R.drawable.images,
-            comments
-        ),
-        CoffeShop(
-            "Coffe Room",
-            "St. Germany, Berlin",
-            R.drawable.images1,
-            comments
-        ),
-        CoffeShop(
-            "Coffe Ibiza",
-            "St. Colon, Madrid",
-            R.drawable.images2,
-            comments
-        ),
-        CoffeShop(
-            "Pudding Coffe Shop",
-            "St. Diagonal, Barcelona",
-            R.drawable.images3,
-            comments
-        ),
-        CoffeShop(
-            "L' Expresso",
-            "St. Picadilly Circus, London",
-            R.drawable.images4,
-            comments
-        ),
-        CoffeShop(
-            "Coffe Corner",
-            "St. Àngel Guimerà, Valencia",
-            R.drawable.images5,
-            comments
-        ),
-        CoffeShop(
-            "Sweet Cup",
-            "St. Kinkerstraat, Amsterdam",
-            R.drawable.images6,
-            comments
-        )
+    var selection by rememberSaveable {mutableStateOf(0f)}
+
+    Slider(
+        value = selection,
+        valueRange = range,
+        steps = steps,
+        onValueChange = {selection = it},
+        modifier = Modifier.padding(15.dp,0.dp, 15.dp,0.dp),
+        colors = SliderDefaults.colors(Color.Yellow)
     )
 }
+
+/* fun ShowSlider(): Float {
+    val range = 0f..10f
+    val steps = 9
+
+    var selection by remember {mutableStateOf(0f)}
+
+    Slider(
+        value = selection,
+        valueRange = range,
+        steps = steps,
+        onValueChange = {selection = it},
+        modifier = Modifier.padding(15.dp,0.dp, 15.dp,0.dp),
+        //colors = SliderDefaults.colors(Color.Yellow)
+    )
+
+    return selection
+} */
+
+
+/*@Preview
+@Composable
+fun PreviewMain() {
+    val navController = rememberNavController()
+    AppInit(navController)
+}*/

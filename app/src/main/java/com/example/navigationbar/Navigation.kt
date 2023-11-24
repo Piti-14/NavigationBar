@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.navigationbar.ui.theme.NavigationBarTheme
 
 @Composable
 fun BottomNavigationBar(){
@@ -18,7 +19,8 @@ fun Navigation(){
     var navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Screen.MainScreen.route){
-        composable()
+        composable(Screen.MainScreen.route){ NavigationBarTheme{} }
+
     }
 
 }
