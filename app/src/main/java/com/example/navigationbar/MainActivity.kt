@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,26 +40,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(Modifier.fillMaxSize()) {
-                        Text(
-                            text = "MY PROJECTs",
-                            modifier = Modifier.fillMaxWidth().height(670.dp)
-                        )
+                    Scaffold (
+                        bottomBar = { BottomNavigationBar() }
+                    ) {
 
-                        var selectedItem by rememberSaveable { mutableStateOf(0) }
-                        val items = listOf("My Photos", "Coffe Shops", "Sol")
-                        val icons = listOf(Icons.Filled.CameraAlt, Icons.Filled.Coffee, Icons.Filled.LightMode)
-
-                        NavigationBar(Modifier.weight(1f)) {
-                            items.forEachIndexed { index, item ->
-                                NavigationBarItem(
-                                    icon = { icons[index] },
-                                    label = { Text(item) },
-                                    selected = selectedItem == index,
-                                    onClick = { selectedItem = index }
-                                )
-                            }
-                        }
                     }
                 }
             }
