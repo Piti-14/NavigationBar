@@ -97,11 +97,12 @@ fun RatingBar() {
     )
 }
 
-/* fun ShowSlider(): Float {
-    val range = 0f..10f
-    val steps = 9
+/*
+ * fun ShowSlider(): Float {
+ * val range = 0f..10f
+ * val steps = 9
 
-    var selection by remember {mutableStateOf(0f)}
+ * var selection by remember {mutableStateOf(0f)}
 
     Slider(
         value = selection,
